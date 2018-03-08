@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, os, hashlib
+import sys, os, hashlib, traceback
 
 ### must be executed from the directory where asn1_encoder.py resides
 
@@ -53,6 +53,7 @@ def test_der(fname, args, expected):
         return der
     except:
         print "[-] Failed to execute: %s(%s)" % (fname, repr(args)[:40])
+        print traceback.format_exc()
         error = 1
 
 
@@ -99,6 +100,7 @@ test_der("asn1_bitstring", ["1"], "03020780")
 test_der("asn1_bitstring", ["101010"], "030202a8")
 test_der("asn1_bitstring", ["0011111111"], "0303063fc0")
 test_der("asn1_bitstring", ["0011111111000000"], "0303003fc0")
+test_der("asn1_bitstring", ["00000000001111"], "030302003c")
 
 if error:
     print "[-] Some of the tests failed!"

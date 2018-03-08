@@ -1,16 +1,17 @@
-#!/usr/bin/env python
-import sys  # do not use any other imports/libraries
+#!/usr/bin/python
 
+import hashlib, sys
+from pyasn1.codec.der import decoder
+sys.path = sys.path[1:] # don't remove! otherwise the library import below will try to import your hmac.py
+import hmac # do not use any other imports/libraries
 
-# took 16.0 hours (please specify here how much time your solution required)
+# took 7.0 hours (please specify here how much time your solution required)
 
-# Looked at plethora of sources for both trying to understand the underlying logic and
-# implementation techniques. I did not know if we were allowed to implement separate functions
-# for bytestring conversions so I tried to do them inside the template functions; albeit rather poorly.
-
-# Comment for the 08.03.2018 commit; based on the feedback from the instructor and certainty that we are allowed the
-# change the template to add extra helper functions, I have worked on the code some more to make my life easier for the
-# hmac homework and probably the future ones too. Changed the hours comment factoring in this part.
+# I am on a Windows system and my VM is really slow so could not really test it with the test script
+# but it seems to be working for at least -mac option. Trying to fix my asn1 encoder
+# took a big chunk of my time and I saw at 3AM that you published a working version
+# Only used the part for asn1_bitstring because fixing mine for only one of the updated tests was eating
+# time from the hmac part.
 
 
 def intToBytestring(i):
@@ -157,27 +158,78 @@ def asn1_tag_explicit(der, tag):
     pass
 
 
-# figure out what to put in '...' by looking on ASN.1 structure required (see slides)
-# I changed the values in this part by cross referencing the der.produced values that the test
-# file is printing when they are not matched. For example the current utctime is 180301014400Z
-# for me but the test is expecting 150223010900Z. Just copy pasted the octet string in hex there
-# too
-asn1 = asn1_tag_explicit(asn1_sequence(
-                            asn1_set(asn1_integer(5) +
-                                     asn1_tag_explicit(
-                                         asn1_integer(200), 2) +
-                                     asn1_tag_explicit(
-                                         asn1_integer(65407), 11)
-                                     )
-                            + asn1_boolean(True)
-                            + asn1_bitstring("110")
-                            + asn1_octetstring('\x00\x01\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02' +
-                                               '\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02' +
-                                               '\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02')
-                            + asn1_null()
-                            + asn1_objectidentifier([1, 2, 840, 113549, 1])
-                            + asn1_printablestring('hello.')
-                            + asn1_utctime('150223010900Z'))
-                            , 0)
+def calc(filename, hash):
+    print "[?] Enter key:",
+    key = raw_input()
+    macer = hmac.new(key, None, hash)
+    chunkLoop = True
+    with open(filename, 'rb') as p:
+        while chunkLoop:
+            data_chunk = p.read(512)
+            if not data_chunk:
+                chunkLoop = False
+            macer.update(data_chunk)
+    p.close()
+    digest = macer.digest()
+    return digest
 
-open(sys.argv[1], 'w').write(asn1)
+
+def verify(filename):
+    digest_calculated = ''
+    digest = ''
+    print "[+] Reading HMAC DigestInfo from", filename+".hmac"
+    with open(filename + ".hmac", 'rb') as p:
+        file_data = p.read()
+    p.close()
+    digest = str(decoder.decode(file_data)[0][1])
+    hash_alg = decoder.decode(file_data)[0][0][0]
+    if str(hash_alg) == '1.2.840.113549.2.5':
+        digest_calculated = calc(filename, hashlib.md5)
+    elif str(hash_alg) == '1.3.14.3.2.26':
+        digest_calculated = calc(filename, hashlib.sha1)
+    elif str(hash_alg) == '2.16.840.1.101.3.4.2.1':
+        digest_calculated = calc(filename, hashlib.sha256)
+    else:
+        print("Unsupported hashlib algorithm")
+
+    if digest_calculated != digest:
+        print "[-] Wrong key or message has been manipulated!"
+    else:
+        print "[+] HMAC verification successful!"
+
+    pass
+
+def mac(filename):
+    print "[?] Enter key:",
+    key = raw_input()
+    macer = hmac.new(key, None, hashlib.sha256)
+    chunkLoop = True
+    with open(filename, 'rb') as p:
+         while chunkLoop:
+               data_chunk = p.read(512)
+               if not data_chunk:
+                   chunkLoop = False
+               macer.update(data_chunk)
+    p.close()
+    asn = asn1_sequence(asn1_sequence(asn1_objectidentifier([2, 16, 840, 1, 101, 3, 4, 2, 1]) + asn1_null())
+                        + asn1_octetstring(macer.digest())
+                        )
+    print "[+] Writing HMAC DigestInfo to", filename+".hmac"
+    with open(filename + ".hmac", 'w+') as p:
+        p.write(asn)
+    p.close()
+
+def usage():
+    print "Usage:"
+    print "-verify <filename>"
+    print "-mac <filename>"
+    sys.exit(1)
+
+if len(sys.argv) != 3:
+    usage()
+elif sys.argv[1] == '-mac':
+    mac(sys.argv[2])
+elif sys.argv[1] == '-verify':
+    verify(sys.argv[2])
+else:
+    usage()
