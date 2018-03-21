@@ -254,11 +254,11 @@ def encrypt(pfile, cfile):
     cipherTxt = cbcEnc(nonce, keyAES, pfile)
 
     # writing ciphertext in temporary file and calculating HMAC digest
-    with open('cipherTxt.temp', "w+") as p:  # I figure it is bad practice to create this file in the same directory
+    with open(cfile + '.tmp', "w+") as p:  # I figure it is bad practice to create this file in the same directory
         p.write(cipherTxt)                   # but Windows gives me a headache when I try to write in another directory
     p.close()
     macer = hmac.new(keyHMAC, None, hashlib.sha1)
-    with open('cipherTxt.temp', 'r') as p:
+    with open(cfile + '.tmp', 'r') as p:
          while chunkLoop:
             data_chunk = p.read(512)
             if not data_chunk:
@@ -277,14 +277,14 @@ def encrypt(pfile, cfile):
     # writing temporary ciphertext file to cfile
     with open(cfile, 'w+') as p:
         p.write(asn)
-        with open('cipherTxt.temp', 'r') as y:
+        with open(cfile + '.tmp', 'r') as y:
             for x in y:
                 p.write(x)
         y.close()
     p.close()
 
     # deleting temporary ciphertext file
-    os.remove('cipherTxt.temp')
+    os.remove(cfile + '.tmp')
     pass
 
 
