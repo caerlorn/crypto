@@ -5,6 +5,7 @@ from pyasn1.codec.der import decoder
 
 # took 11 hours (please specify here how much time your solution required)
 
+# http://www.umich.edu/~x509/ssleay/asn1-oids.html was really helpful for all the oid numbers
 
 # parse arguments
 parser = argparse.ArgumentParser(description='generate self-signed X.509 CA certificate', add_help=False)
@@ -302,9 +303,9 @@ def selfsigned(privkey, certfile):
     signatureVal = asn1_bitstring(signatureVal)
     signatureAlgo = asn1_sequence(asn1_objectidentifier([1, 2, 840, 113549, 1, 1, 11]) + asn1_null())
     # construct final X.509 DER
-    certificate = asn1_sequence(tbsCertificate + signatureAlgo + signatureVal)
+    cert = asn1_sequence(tbsCertificate + signatureAlgo + signatureVal)
     # convert to PEM by .encode('base64') and adding PEM headers
-    pem = '-----BEGIN CERTIFICATE-----\n' + certificate.encode('base64') + '-----END CERTIFICATE-----\n'
+    pem = '-----BEGIN CERTIFICATE-----\n' + cert.encode('base64') + '-----END CERTIFICATE-----\n'
     # write PEM certificate to file
     with open(certfile, 'w+') as p:
         p.write(pem)
