@@ -3,10 +3,6 @@
 import hashlib, os, sys # do not use any other imports/libraries
 from pyasn1.codec.der import decoder
 
-# took 14.0 hours (please specify here how much time your solution required)
-
-# Changed the line separators to Unix style in PyCharm too, so easy testing in Windows->Ubuntu for me and you I suppose
-
 
 # def intToBytestring(*args):  # was just testing overloaded funcs since it seems python doesn't allow it like Java
 #     s = ''
