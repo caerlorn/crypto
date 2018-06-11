@@ -10,24 +10,6 @@ from Crypto.Protocol.KDF import PBKDF2 # https://www.dlitz.net/software/pycrypto
 from Crypto.Util.strxor import strxor  # https://www.dlitz.net/software/pycrypto/api/current/Crypto.Util.strxor-module.html#strxor
 import hashlib, hmac # do not use any other imports/libraries
 
-# took 14.0 hours (please specify here how much time your solution required)
-
-# Implement CBC mode using pure AES-128 (ECB mode) part was kind of hard to wrap my head around (especially the decrypt)
-
-# https://stackoverflow.com/questions/43373511/how-to-set-block-size-in-pycrypto-aes-ctr-mode
-# https://crypto.stackexchange.com/questions/29134/precisely-how-does-cbc-mode-use-the-initialization-vector
-# http://www.crypto-it.net/eng/theory/modes-of-block-ciphers.html
-# https://crypto.stackexchange.com/questions/225/should-i-use-ecb-or-cbc-encryption-mode-for-my-block-cipher/226
-# https://stackoverflow.com/questions/304658/what-is-the-algorithm-identifier-when-using-aes-in-cbc-mode-with-iso-10126-paddi
-# https://stackoverflow.com/questions/11696472/seek-function
-# Used the above links to at least understand enough to implement what I understood
-
-# I also used the 'nonce' notation instead of 'initializationVector' or 'iv' because I read that there is
-# a discordance about their interchangeability in the context of uniqueness although I can see nonce is for ctr mode
-# It is 6:20AM right now so not going to change it with a refactor and test everything on my slow VM again
-# https://crypto.stackexchange.com/questions/3965/what-is-the-main-difference-between-a-key-an-iv-and-a-nonce/3970
-# http://www.cryptofails.com/post/70059609995/crypto-noobs-1-initialization-vectors
-
 
 def intToBytestring(i):
     s = ''
