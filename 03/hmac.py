@@ -5,14 +5,6 @@ from pyasn1.codec.der import decoder
 sys.path = sys.path[1:] # don't remove! otherwise the library import below will try to import your hmac.py
 import hmac # do not use any other imports/libraries
 
-# took 7.0 hours (please specify here how much time your solution required)
-
-# I am on a Windows system and my VM is really slow so could not really test it with the test script
-# but it seems to be working for at least -mac option. Trying to fix my asn1 encoder
-# took a big chunk of my time and I saw at 3AM that you published a working version
-# Only used the part for asn1_bitstring because fixing mine for only one of the updated tests was eating
-# time from the hmac part.
-
 
 def intToBytestring(i):
     s = ''
