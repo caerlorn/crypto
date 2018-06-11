@@ -2,9 +2,6 @@
 import os, sys  # do not use any other imports/libraries
 
 
-# I tried to fix the problems that I had last year
-# Still took 7-8 hours (please specify here how much time your solution required)
-
 def bytestring_to_int(s):
     # your implementation here
     i = []
