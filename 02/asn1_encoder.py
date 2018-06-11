@@ -2,17 +2,6 @@
 import sys  # do not use any other imports/libraries
 
 
-# took 16.0 hours (please specify here how much time your solution required)
-
-# Looked at plethora of sources for both trying to understand the underlying logic and
-# implementation techniques. I did not know if we were allowed to implement separate functions
-# for bytestring conversions so I tried to do them inside the template functions; albeit rather poorly.
-
-# Comment for the 08.03.2018 commit; based on the feedback from the instructor and certainty that we are allowed the
-# change the template to add extra helper functions, I have worked on the code some more to make my life easier for the
-# hmac homework and probably the future ones too. Changed the hours comment factoring in this part.
-
-
 def intToBytestring(i):
     s = ''
     if not i:
