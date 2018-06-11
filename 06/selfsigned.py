@@ -3,8 +3,6 @@
 import argparse, hashlib, os, sys # do not use any other imports/libraries
 from pyasn1.codec.der import decoder
 
-# took 11 hours (please specify here how much time your solution required)
-
 # http://www.umich.edu/~x509/ssleay/asn1-oids.html was really helpful for all the oid numbers
 
 # parse arguments
